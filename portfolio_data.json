@@ -1,0 +1,73 @@
+{
+  "name": "Alex Hunter",
+  "portfolio": {
+    "initialCapital": 100000,
+    "cashBalance": 87635.5,
+    "positions": {
+      "AAPL": {
+        "symbol": "AAPL",
+        "shares": 15,
+        "totalCost": 3441,
+        "averagePrice": 229.4
+      },
+      "NVDA": {
+        "symbol": "NVDA",
+        "shares": 25,
+        "totalCost": 3531.25,
+        "averagePrice": 141.25
+      },
+      "TSLA": {
+        "symbol": "TSLA",
+        "shares": 20,
+        "totalCost": 4435,
+        "averagePrice": 221.75
+      }
+    },
+    "transactions": [
+      {
+        "id": "TX-1761502400-001",
+        "timestamp": 1761501400000,
+        "symbol": "AAPL",
+        "type": "BUY",
+        "shares": 15,
+        "price": 229.4,
+        "totalAmount": 3441,
+        "realizedPnL": 0
+      },
+      {
+        "id": "TX-1761502400-002",
+        "timestamp": 1761501600000,
+        "symbol": "NVDA",
+        "type": "BUY",
+        "shares": 25,
+        "price": 141.25,
+        "totalAmount": 3531.25,
+        "realizedPnL": 0
+      },
+      {
+        "id": "TX-1761502400-003",
+        "timestamp": 1761501900000,
+        "symbol": "TSLA",
+        "type": "BUY",
+        "shares": 20,
+        "price": 221.75,
+        "totalAmount": 4435,
+        "realizedPnL": 0
+      }
+    ],
+    "snapshots": [
+      {
+        "timestamp": 1761501000000,
+        "totalValue": 100000,
+        "cash": 100000,
+        "invested": 0
+      },
+      {
+        "timestamp": 1761502000000,
+        "totalValue": 100340,
+        "cash": 87635.5,
+        "invested": 12704.5
+      }
+    ]
+  }
+}

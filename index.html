@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ApexTrader — High-Frequency Stock Trading Simulation & Portfolio Intelligence</title>
+  <meta name="description" content="Experience realistic real-time stock market simulation, interactive candlestick charts, buy/sell execution engine, and portfolio performance analytics built with Object-Oriented JavaScript.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Top Real-Time Navigation & Portfolio Financial Header -->
+  <header class="top-header">
+    <div class="header-container">
+      
+      <!-- Brand & Status -->
+      <div class="brand-section">
+        <div class="brand-logo-icon">📈</div>
+        <div>
+          <h1 class="brand-title">ApexTrader Pro</h1>
+        </div>
+        <span id="market-status-badge" class="status-badge open">🟢 LIVE (1x)</span>
+      </div>
+
+      <!-- Real-time Portfolio Valuation Metrics -->
+      <div class="header-stats">
+        <div class="stat-item">
+          <span class="stat-lbl">Portfolio Net Worth</span>
+          <span id="hdr-net-worth" class="stat-num">$100,000.00</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-lbl">Available Cash</span>
+          <span id="hdr-cash" class="stat-num">$100,000.00</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-lbl">Today's P&amp;L</span>
+          <span id="hdr-day-pnl" class="stat-num green">+$0.00</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-lbl">Total Return</span>
+          <span id="hdr-total-pnl" class="stat-num green">+$0.00 (0.00%)</span>
+        </div>
+      </div>
+
+      <!-- Simulation Clock Controls & Audio -->
+      <div class="header-actions">
+        <div class="speed-control-group" role="group" aria-label="Simulation Speed Controls">
+          <button class="speed-btn active" data-speed="1" title="Real-time standard speed (1x)">1x</button>
+          <button class="speed-btn" data-speed="2" title="Fast speed (2x)">2x</button>
+          <button class="speed-btn" data-speed="5" title="Hyper speed (5x)">5x</button>
+          <button class="speed-btn" data-speed="pause" title="Pause simulation ticks">⏸</button>
+        </div>
+        <button id="btn-toggle-sound" class="btn-secondary active" title="Toggle audio feedback">
+          🔊 Sound: ON
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Real-Time Scrolling Ticker Tape -->
+  <section class="ticker-container" aria-label="Live Market Quotes Ticker">
+    <div id="ticker-track" class="ticker-track">
+      <!-- Injected by UIController -->
+    </div>
+  </section>
+
+  <!-- Main Trading Workspace Grid -->
+  <main class="main-layout">
+
+    <!-- Column 1: Market Screener & Watchlist -->
+    <aside class="glass-card left-watchlist-col" aria-label="Market Watchlist and Screener">
+      <div class="card-header-bar">
+        <h2 class="card-title">Market Screener</h2>
+        <span class="sector-badge">12 Assets</span>
+      </div>
+
+      <div class="search-filter-box">
+        <input type="text" id="stock-search-input" class="custom-input" placeholder="Search symbol or company..." aria-label="Search stock symbol">
+        <select id="sector-filter" class="custom-select" aria-label="Filter stocks by sector">
+          <option value="ALL">All Sectors</option>
+          <option value="Technology">Technology &amp; Software</option>
+          <option value="Semiconductors">Semiconductors / AI</option>
+          <option value="Automotive">Automotive &amp; EV</option>
+          <option value="Healthcare">Healthcare &amp; Pharma</option>
+          <option value="Energy">Energy &amp; Commodities</option>
+          <option value="Index ETF">Index ETFs</option>
+        </select>
+      </div>
+
+      <div id="stock-list-container" class="stock-list-scroll">
+        <!-- Injected dynamically by UIController -->
+      </div>
+    </aside>
+
+    <!-- Column 2: Interactive Charting Engine & Active Asset Quotes -->
+    <section class="glass-card center-chart-col" aria-label="Interactive Stock Chart and Market Quotes">
+      
+      <!-- Stock Header -->
+      <div class="chart-panel-header">
+        <div class="active-quote-main">
+          <div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span id="active-stock-symbol" class="symbol-large">AAPL</span>
+              <span id="active-stock-sector" class="sector-badge">Technology</span>
+            </div>
+            <span id="active-stock-name" class="company-name-tag">Apple Inc.</span>
+          </div>
+        </div>
+
+        <div class="price-display-hero">
+          <span id="active-stock-price" class="hero-price">$229.40</span>
+          <span id="active-stock-change" class="stat-badge positive">+1.25%</span>
+        </div>
+      </div>
+
+      <!-- Key Financial Fundamentals Ribbon -->
+      <div class="key-stats-ribbon">
+        <div class="stat-box">
+          <span class="stat-box-lbl">Day High</span>
+          <span id="stat-high" class="stat-box-val">$231.50</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-box-lbl">Day Low</span>
+          <span id="stat-low" class="stat-box-val">$227.10</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-box-lbl">Volume</span>
+          <span id="stat-volume" class="stat-box-val">42,810,400</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-box-lbl">Market Cap</span>
+          <span id="stat-market-cap" class="stat-box-val">$3.51T</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-box-lbl">P/E Ratio</span>
+          <span id="stat-pe" class="stat-box-val">34.2</span>
+        </div>
+      </div>
+
+      <!-- Chart Control Bar (Timeframe & Mode Selection) -->
+      <div class="chart-controls-bar">
+        <div class="tf-group" role="group" aria-label="Chart Timeframe">
+          <button class="tf-btn" data-tf="1D">1D</button>
+          <button class="tf-btn" data-tf="1W">1W</button>
+          <button class="tf-btn active" data-tf="1M">1M</button>
+          <button class="tf-btn" data-tf="ALL">ALL</button>
+        </div>
+
+        <div class="chart-type-group" role="group" aria-label="Chart Display Type">
+          <button class="chart-type-btn active" data-mode="candlestick" title="Candlestick OHLC">🕯️ Candles</button>
+          <button class="chart-type-btn" data-mode="line" title="Glowing Line Area">📈 Area</button>
+        </div>
+
+        <div class="indicator-checkboxes">
+          <label title="20-day Simple Moving Average">
+            <input type="checkbox" id="toggle-sma" checked>
+            <span style="color:#f59e0b">SMA 20</span>
+          </label>
+          <label title="50-day Exponential Moving Average">
+            <input type="checkbox" id="toggle-ema">
+            <span style="color:#06b6d4">EMA 50</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Canvas Rendering Viewport -->
+      <div class="chart-canvas-wrapper">
+        <canvas id="main-stock-canvas" width="900" height="420"></canvas>
+      </div>
+
+    </section>
+
+    <!-- Column 3: Order Execution Terminal & Depth -->
+    <aside class="glass-card right-terminal-col" aria-label="Order Execution Terminal">
+      
+      <!-- Buy / Sell Tabs -->
+      <div class="terminal-tabs" role="tablist">
+        <button id="tab-btn-buy" class="tab-btn buy active" role="tab" aria-selected="true">BUY</button>
+        <button id="tab-btn-sell" class="tab-btn sell" role="tab" aria-selected="false">SELL</button>
+      </div>
+
+      <div class="terminal-body">
+        
+        <!-- Order Type Selection -->
+        <div class="form-group">
+          <label for="order-type-select" class="form-label">Order Type</label>
+          <select id="order-type-select" class="custom-select">
+            <option value="MARKET">Market Order (Instant Fill)</option>
+            <option value="LIMIT">Limit Order (Target Price)</option>
+            <option value="STOP_LOSS">Stop-Loss Order (Risk Cut)</option>
+          </select>
+        </div>
+
+        <!-- Limit / Target Trigger Price (Conditional) -->
+        <div id="limit-price-group" class="form-group" style="display: none;">
+          <label for="order-limit-price" class="form-label">Limit / Trigger Price ($)</label>
+          <input type="number" id="order-limit-price" class="custom-input" step="0.01" min="0.01" placeholder="Target execution price">
+        </div>
+
+        <!-- Number of Shares Input -->
+        <div class="form-group">
+          <label for="order-shares-input" class="form-label">Quantity (Shares)</label>
+          <input type="number" id="order-shares-input" class="custom-input" min="1" step="1" placeholder="Enter share count">
+        </div>
+
+        <!-- Quick Allocation Buttons -->
+        <div class="quick-pct-row">
+          <button class="quick-pct-btn" data-pct="25">25%</button>
+          <button class="quick-pct-btn" data-pct="50">50%</button>
+          <button class="quick-pct-btn" data-pct="75">75%</button>
+          <button class="quick-pct-btn" data-pct="100">MAX</button>
+        </div>
+
+        <!-- Order Cost Summary & Balance Preview -->
+        <div class="order-summary-box">
+          <div class="summary-line">
+            <span class="text-muted">Buying Power:</span>
+            <span id="trade-buying-power" class="font-mono">$100,000.00</span>
+          </div>
+          <div class="summary-line">
+            <span class="text-muted">Shares Owned:</span>
+            <span id="trade-shares-owned" class="font-mono">0 shares</span>
+          </div>
+          <div class="summary-line">
+            <span class="text-muted">Estimated Broker Fee:</span>
+            <span class="font-mono green">$0.00 (Free)</span>
+          </div>
+          <div class="summary-line total">
+            <span>Estimated Total:</span>
+            <span id="order-estimated-total" class="font-mono">$0.00</span>
+          </div>
+        </div>
+
+        <!-- Trade Submit CTA -->
+        <button id="btn-submit-order" class="btn-trade-submit buy">Buy AAPL</button>
+
+      </div>
+
+      <!-- Pending Limit Orders List -->
+      <div class="pending-orders-box">
+        <span class="form-label">Pending Limit / Stop Orders</span>
+        <div id="pending-orders-list" class="pending-orders-list">
+          <!-- Injected by UIController -->
+        </div>
+      </div>
+
+      <!-- Simulated Level 2 Order Book Depth -->
+      <div class="order-book-card">
+        <div class="order-book-header">
+          <span>Bid / Ask Order Book</span>
+          <span id="order-book-spread">Spread: $0.02</span>
+        </div>
+        <div class="order-book-table">
+          <div style="margin-bottom: 4px;">
+            <div id="order-book-asks"></div>
+          </div>
+          <div>
+            <div id="order-book-bids"></div>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+  </main>
+
+  <!-- Bottom Section: Multi-Tab Portfolio & Analytics Suite -->
+  <section class="bottom-dashboard">
+    <div class="glass-card">
+      
+      <!-- Navigation Tabs -->
+      <nav class="dash-nav-bar" role="tablist">
+        <button class="dash-nav-tab active" data-tab="holdings">💼 Open Positions</button>
+        <button class="dash-nav-tab" data-tab="analytics">📊 Portfolio Performance Curve</button>
+        <button class="dash-nav-tab" data-tab="history">📜 Transaction History Ledger</button>
+        <button class="dash-nav-tab" data-tab="news">📰 Market News &amp; Catalysts</button>
+        <button class="dash-nav-tab" data-tab="settings">💾 File I/O &amp; Data Persistence</button>
+      </nav>
+
+      <!-- Panel 1: Holdings & Open Positions -->
+      <div id="panel-holdings" class="dash-panel active">
+        <div class="data-table-wrapper">
+          <table class="data-table" aria-label="Portfolio Stock Holdings">
+            <thead>
+              <tr>
+                <th>Asset</th>
+                <th>Shares</th>
+                <th>Avg Buy Price</th>
+                <th>Current Price</th>
+                <th>Market Value</th>
+                <th>Unrealized P&amp;L</th>
+                <th>Return (%)</th>
+                <th>Portfolio %</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="holdings-tbody">
+              <!-- Injected by UIController -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Panel 2: Performance Analytics & Equity Curve -->
+      <div id="panel-analytics" class="dash-panel">
+        <div class="analytics-grid">
+          
+          <div class="perf-chart-box">
+            <h3 class="card-title" style="margin-bottom: 8px;">Equity Growth Over Time</h3>
+            <canvas id="portfolio-perf-canvas" width="800" height="240"></canvas>
+            
+            <div class="kpi-cards-grid">
+              <div class="kpi-card">
+                <span class="kpi-lbl">Trading Win Rate</span>
+                <div id="metric-win-rate" class="metric-val">0.0%</div>
+              </div>
+              <div class="kpi-card">
+                <span class="kpi-lbl">Total Realized P&amp;L</span>
+                <div id="metric-realized-pnl" class="metric-val green">+$0.00</div>
+              </div>
+              <div class="kpi-card">
+                <span class="kpi-lbl">Total Unrealized P&amp;L</span>
+                <div id="metric-unrealized-pnl" class="metric-val green">+$0.00</div>
+              </div>
+              <div class="kpi-card">
+                <span class="kpi-lbl">Total Executed Trades</span>
+                <div id="metric-total-trades" class="metric-val">0 trades</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Asset Allocation Panel -->
+          <div class="alloc-panel">
+            <h3 class="card-title">Asset Allocation Distribution</h3>
+            <div id="asset-alloc-bars">
+              <!-- Injected by UIController -->
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Panel 3: Trade History Ledger -->
+      <div id="panel-history" class="dash-panel">
+        <div style="padding: 12px 16px; display: flex; justify-content: flex-end; gap: 10px;">
+          <button id="btn-export-csv" class="btn-secondary">📥 Export Ledger to CSV</button>
+        </div>
+        <div class="data-table-wrapper">
+          <table class="data-table" aria-label="Trade History Ledger">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Execution Time</th>
+                <th>Asset</th>
+                <th>Action</th>
+                <th>Shares</th>
+                <th>Execution Price</th>
+                <th>Total Value</th>
+                <th>Realized P&amp;L</th>
+              </tr>
+            </thead>
+            <tbody id="history-tbody">
+              <!-- Injected by UIController -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Panel 4: Breaking Financial News Feed -->
+      <div id="panel-news" class="dash-panel">
+        <div id="news-feed-list" class="news-feed-list">
+          <!-- Injected by UIController -->
+        </div>
+      </div>
+
+      <!-- Panel 5: File I/O, Backup & Persistence -->
+      <div id="panel-settings" class="dash-panel">
+        <div class="settings-panel">
+          
+          <div class="settings-section">
+            <h3 class="settings-sec-title">Local File I/O Backup &amp; Restore</h3>
+            <p class="settings-desc">
+              Persist your entire portfolio state, transactions ledger, and historical equity curve directly to your local computer as a JSON file, or restore a previously saved portfolio file anytime.
+            </p>
+            <div class="btn-row">
+              <button id="btn-export-json" class="btn-primary">💾 Export Portfolio File (JSON)</button>
+              <label class="btn-secondary" style="cursor: pointer;">
+                📂 Import Portfolio File
+                <input type="file" id="file-import-input" accept=".json" style="display: none;">
+              </label>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3 class="settings-sec-title">Quick Capital Presets &amp; Simulation Reset</h3>
+            <p class="settings-desc">
+              Reset your trading simulation balance to a clean slate with custom starting capital.
+            </p>
+            <div class="btn-row">
+              <button class="btn-secondary preset-cap-btn" data-amount="10000">$10,000</button>
+              <button class="btn-secondary preset-cap-btn" data-amount="50000">$50,000</button>
+              <button class="btn-secondary preset-cap-btn active" data-amount="100000">$100,000</button>
+              <button class="btn-secondary preset-cap-btn" data-amount="250000">$250,000</button>
+              <button id="btn-reset-portfolio" class="btn-danger">⚠️ Reset Simulation</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Interactive Toast Notification Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Consolidated Application Bundle (Enables direct file:// double-click & HTTP execution) -->
+  <script src="js/bundle.js"></script>
+</body>
+</html>
